@@ -1,3 +1,6 @@
+![alt text](https://github.com/Outerbeast/AimDownSights/blob/main/AimDownSights.png?raw=true)
+
+
 # AimDownSights
 
 Adds more realistic aiming for weapons that support zooming such as
