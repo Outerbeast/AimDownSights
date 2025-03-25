@@ -8,7 +8,7 @@ dictionary dictScopes, dictNoScope;
 void PluginInit()
 {
     g_Module.ScriptInfo.SetAuthor( "Outerbeast" );
-    g_Module.ScriptInfo.SetContactInfo( "https://github.com/Outerbeast" );
+    g_Module.ScriptInfo.SetContactInfo( "https://github.com/Outerbeast/AimDownSights" );
     
     g_Hooks.RegisterHook( Hooks::Weapon::WeaponSecondaryAttack, Zoom );
     g_Hooks.RegisterHook( Hooks::Weapon::WeaponReload, Reload );
@@ -61,11 +61,14 @@ void UpdateViewModel()
 
         CBasePlayerWeapon@ pWeapon = cast<CBasePlayerWeapon@>( pPlayer.m_hActiveItem.GetEntity() );
 
-        if( pWeapon is null || !dictScopes.exists( pWeapon.GetClassname() ) )
+        if( pWeapon is null )
             continue;
 
-        if( !pPlayer.IsAlive() && pPlayer.m_iHideHUD & HIDEHUD_CROSSHAIR != 0 )
-            pPlayer.m_iHideHUD &= ~HIDEHUD_CROSSHAIR;
+        if( pPlayer.m_iHideHUD & HIDEHUD_CROSSHAIR != 0 )
+        {
+            if( !pPlayer.IsAlive() || !dictScopes.exists( pWeapon.GetClassname() ) )
+                pPlayer.m_iHideHUD &= ~HIDEHUD_CROSSHAIR;
+        }
 
         if( !pWeapon.m_fInZoom && string( dictNoScope[pWeapon.GetClassname()] ) == "" )
             dictNoScope[pWeapon.GetClassname()] = string( pPlayer.pev.viewmodel );
