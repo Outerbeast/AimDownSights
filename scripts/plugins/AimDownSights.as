@@ -4,6 +4,7 @@
 - Outerbeast
 */
 dictionary dictScopes, dictNoScope;
+array<EHandle> H_PREVIOUS_WPN;
 
 void PluginInit()
 {
@@ -17,6 +18,7 @@ void PluginInit()
 
 void MapInit()
 {
+    H_PREVIOUS_WPN = array<EHandle>( g_Engine.maxClients + 1  );
     GetScopeConfig();
     Precache();
 }
@@ -40,6 +42,8 @@ void GetScopeConfig()
 
         dictScopes[strCurrentLine.Split( ":" )[0]] = strCurrentLine.Split( ":" )[1];
     }
+
+    fileConfig.Close();
 }
 
 void Precache()
@@ -66,12 +70,14 @@ void UpdateViewModel()
 
         if( pPlayer.m_iHideHUD & HIDEHUD_CROSSHAIR != 0 )
         {
-            if( !pPlayer.IsAlive() || !dictScopes.exists( pWeapon.GetClassname() ) )
+            if( !pPlayer.IsAlive() || H_PREVIOUS_WPN[pPlayer.entindex()].GetEntity() !is pPlayer.m_hActiveItem.GetEntity() )
                 pPlayer.m_iHideHUD &= ~HIDEHUD_CROSSHAIR;
         }
 
         if( !pWeapon.m_fInZoom && string( dictNoScope[pWeapon.GetClassname()] ) == "" )
             dictNoScope[pWeapon.GetClassname()] = string( pPlayer.pev.viewmodel );
+
+        H_PREVIOUS_WPN[iPlayer] = pPlayer.m_hActiveItem;
     }
 }
 
